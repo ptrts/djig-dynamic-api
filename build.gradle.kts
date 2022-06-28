@@ -25,6 +25,10 @@ dependencies {
     // Lombok
     compileOnly("org.projectlombok:lombok")
     annotationProcessor("org.projectlombok:lombok")
+
+    api("org.springframework:spring-core")
+    api("org.springframework:spring-beans")
+    api("org.springframework:spring-context")
 }
 
 dependencyManagement {
