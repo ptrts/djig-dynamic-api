@@ -4,7 +4,7 @@ plugins {
     id("maven-publish")
 }
 
-group = "org.taruts.dynamic-java-code-stored-in-git"
+group = "org.taruts.djig"
 version = "001"
 
 java.sourceCompatibility = JavaVersion.VERSION_17
