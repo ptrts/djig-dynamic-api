@@ -62,6 +62,7 @@ publishing {
         }
     }
     repositories {
+        mavenLocal()
         maven {
             name = "s3MavenRepo"
             url = uri("s3://maven.taruts.net")
