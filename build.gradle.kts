@@ -1,7 +1,8 @@
 plugins {
     id("io.spring.dependency-management") version "1.0.11.RELEASE"
-    id("java-library")
-    id("maven-publish")
+    `java-library`
+    `maven-publish`
+    idea
 }
 
 group = "org.taruts.djig"
