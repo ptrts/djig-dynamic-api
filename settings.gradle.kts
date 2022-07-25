@@ -1,1 +1,1 @@
-rootProject.name = "dynamic-api"
+rootProject.name = "djig-dynamic-api"

@@ -38,6 +38,10 @@ dependencyManagement {
     }
 }
 
+configure<JavaPluginExtension> {
+    withSourcesJar()
+}
+
 publishing {
     publications {
         create<MavenPublication>("jar") {
