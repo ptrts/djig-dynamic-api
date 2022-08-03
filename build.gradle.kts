@@ -2,11 +2,11 @@ plugins {
     id("io.spring.dependency-management") version "1.0.11.RELEASE"
     `java-library`
     `maven-publish`
-    idea
+    signing
 }
 
 group = "org.taruts.djig"
-version = "001"
+version = "1.0.0"
 
 java.sourceCompatibility = JavaVersion.VERSION_17
 
@@ -40,6 +40,7 @@ dependencyManagement {
 
 configure<JavaPluginExtension> {
     withSourcesJar()
+    withJavadocJar()
 }
 
 publishing {
@@ -64,18 +65,55 @@ publishing {
                     fromResolutionResult()
                 }
             }
+
+            pom {
+                packaging = "jar"
+                name.set("djig-dynamic-api")
+                url.set("https://gitlab.com/pavel-taruts/demos/djig/dynamic-api")
+                description.set(
+                    """
+                        A library that a dynamic API library part of a djig application must depend on
+                        """
+                )
+
+                licenses {
+                    license {
+                        name.set("The Apache License, Version 2.0")
+                        url.set("http://www.apache.org/licenses/LICENSE-2.0.txt")
+                    }
+                }
+
+                scm {
+                    connection.set("scm:git:https://gitlab.com/pavel-taruts/demos/djig/dynamic-api.git")
+                    developerConnection.set("scm:git:https://gitlab.com/pavel-taruts/demos/djig/dynamic-api.git")
+                    url.set("https://gitlab.com/pavel-taruts/demos/djig/dynamic-api")
+                }
+
+                developers {
+                    developer {
+                        id.set("@ptrtss")
+                        name.set("Pavel Taruts")
+                        email.set("ptrts@mail.ru")
+                    }
+                }
+            }
         }
     }
     repositories {
         mavenLocal()
         maven {
-            name = "s3MavenRepo"
-            url = uri("s3://maven.taruts.net")
-            authentication {
-                // AwsImAuthentication means that the credentials are in an AWS profile on the computer
-                // Only the author of this project has those credentials and can upload dynamic-api artifacts
-                register("aws", AwsImAuthentication::class)
+            name = "OSSRH"
+            val releasesUrl = uri("https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/")
+            val snapshotsUrl = uri("https://s01.oss.sonatype.org/content/repositories/snapshots/")
+            url = if (version.toString().endsWith("SNAPSHOT")) snapshotsUrl else releasesUrl
+            credentials {
+                username = project.properties["ossrhUsername"].toString()
+                password = project.properties["ossrhPassword"].toString()
             }
         }
     }
+}
+
+configure<SigningExtension> {
+    sign(publishing.publications["jar"])
 }
