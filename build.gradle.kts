@@ -45,7 +45,7 @@ configure<JavaPluginExtension> {
 
 publishing {
     publications {
-        create<MavenPublication>("jar") {
+        create<MavenPublication>("java") {
             // We use the java-library plugin in this project. The java-library is based upon the java plugin.
             // During the build process, the java plugin creates a so-called component which is a collection of things to publish.
             // The maven-publish plugin can create publications from components.
@@ -72,8 +72,8 @@ publishing {
                 url.set("https://gitlab.com/pavel-taruts/demos/djig/dynamic-api")
                 description.set(
                     """
-                        A library that a dynamic API library part of a djig application must depend on
-                        """
+                    A library that a dynamic API library part of a djig application must depend on
+                    """
                 )
 
                 licenses {
@@ -107,13 +107,31 @@ publishing {
             val snapshotsUrl = uri("https://s01.oss.sonatype.org/content/repositories/snapshots/")
             url = if (version.toString().endsWith("SNAPSHOT")) snapshotsUrl else releasesUrl
             credentials {
-                username = project.properties["ossrhUsername"].toString()
-                password = project.properties["ossrhPassword"].toString()
+                username = project.properties["ossrh.username"].toString()
+                password = project.properties["ossrh.password"].toString()
             }
         }
     }
 }
 
 configure<SigningExtension> {
-    sign(publishing.publications["jar"])
+    if (project.hasProperty("signing.secretKey")) {
+        // It's CI, because there is a project property "signing.secretKey", which we only plan to supply as an environment variable on CI
+
+        // Environment variable ORG_GRADLE_PROJECT_signing.keyId
+        val defaultKeyId: String = project.property("signing.keyId") as String
+
+        // Environment variable ORG_GRADLE_PROJECT_signing.password
+        val defaultPassword: String = project.property("signing.password") as String
+
+        // Environment variable ORG_GRADLE_PROJECT_signing.secretKey
+        val defaultSecretKey: String = project.property("signing.secretKey") as String
+
+        useInMemoryPgpKeys(defaultKeyId, defaultSecretKey, defaultPassword)
+    } else {
+        // It's a developer's computer
+
+        useGpgCmd()
+    }
+    sign(publishing.publications["java"])
 }
